@@ -1,5 +1,34 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+plugins {
+    id 'com.android.application' version '7.2.1' apply false
+    id 'com.android.library' version '7.2.1' apply false
+}
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+// Build all the project in the temporal directory
+allprojects {
+    def YEAR_WEEK   = new Date().format("yyww").toInteger()
+    def DAY         = new Date().format("u").toInteger()
+    def HOUR_MINUTE = new Date().format("HHmm").toInteger()
+
+    // The Timestamp
+    def BUILD_TIMESTAMP = 100000 * YEAR_WEEK + 10000 * DAY + HOUR_MINUTE
+
+    // Sematic Versioning
+    def MAJOR   = 1 // 1: Avestruz, 2: Ballena, 3: Caballo, ..
+    def MINOR   = 0
+    def PATCH   = BUILD_TIMESTAMP
+
+    // Name of animals
+    def BUILD_VERSION   = "Avestruz-${MAJOR}.${MINOR}.${PATCH}"
+
+    // Set the values to whole project
+    ext.buildTimestamp = BUILD_TIMESTAMP
+    ext.buildVersion = BUILD_VERSION
+    logger.lifecycle("Version to use: <${BUILD_VERSION}>.")
+
+    // Use the temporal directory to build (optative)
+    buildDir = "${System.env.TEMP}\\gradle\\${project.name}"
 }
